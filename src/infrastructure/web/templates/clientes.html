@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Listado de Clientes - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-users text-primary me-3"></i>Gestión de Clientes</h1>
+        <hr>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <a href="/clientes/nuevo" class="btn btn-primary">
+            <i class="fas fa-user-plus me-2"></i>Nuevo Cliente
+        </a>
+    </div>
+    <div class="col-md-6">
+        <div class="btn-group float-end" role="group">
+            <button type="button" class="btn btn-outline-secondary" onclick="cargarClientes()">
+                <i class="fas fa-sync-alt me-1"></i>Actualizar
+            </button>
+            <button type="button" class="btn btn-outline-info" onclick="cargarClientes(true)">
+                <i class="fas fa-check-circle me-1"></i>Solo Activos
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Listado de Clientes</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>DNI</th>
+            <th>Membresía</th>  <!-- NUEVA COLUMNA -->
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody id="tablaClientes">
+        <tr>
+            <td colspan="6" class="text-center">Cargando clientes...</td>
+        </tr>
+    </tbody>
+</table>
+    </div>
+</div>
+
+<script>
+    // Cargar clientes al entrar a la página
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarClientes();
+    });
+
+    function cargarClientes(soloActivos = false) {
+        const tbody = document.getElementById('tablaClientes');
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2">Cargando clientes...</p>
+                </td>
+            </tr>
+        `;
+
+        let url = '/api/clientes';
+        if (soloActivos) {
+            url += '?activos=true';
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(clientes => {
+                tbody.innerHTML = '';
+                
+                if (clientes.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center">No hay clientes para mostrar</td>
+                        </tr>
+                    `;
+                    return;
+                }
+
+                clientes.forEach(cliente => {
+                    const row = tbody.insertRow();
+                    
+                    // Formatear la membresía (solo nombre, sin precio)
+                    let membresiaHtml = '<span class="text-muted">—</span>';
+                    if (cliente.membresia_nombre) {
+                        membresiaHtml = `<span class="badge bg-info">${cliente.membresia_nombre}</span>`;
+                    }
+                    
+                    // Formatear estado
+                    const estadoHtml = `<span class="badge ${cliente.activo ? 'bg-success' : 'bg-secondary'}">
+                        ${cliente.activo ? 'Activo' : 'Inactivo'}
+                    </span>`;
+                    
+                    // Botones de acción
+                    let botonesHtml = `
+                        <button class="btn btn-sm btn-info" onclick="verCliente(${cliente.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    `;
+                    
+                    if (cliente.activo) {
+                        botonesHtml += `
+                            <button class="btn btn-sm btn-warning" onclick="darDeBaja(${cliente.id})">
+                                <i class="fas fa-user-slash"></i>
+                            </button>
+                        `;
+                    }
+                    
+                    row.innerHTML = `
+                        <td>${cliente.id}</td>
+                        <td>${cliente.nombre} ${cliente.apellido}</td>
+                        <td>${cliente.dni}</td>
+                        <td>${membresiaHtml}</td>
+                        <td>${estadoHtml}</td>
+                        <td>${botonesHtml}</td>
+                    `;
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center text-danger">
+                            Error al cargar los clientes
+                        </td>
+                    </tr>
+                `;
+            });
+    }
+
+    function verCliente(id) {
+        window.location.href = `/clientes/${id}`;
+    }
+
+    function darDeBaja(id) {
+        if (confirm('¿Estás seguro de dar de baja este cliente?')) {
+            fetch(`/api/clientes/${id}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Cliente dado de baja exitosamente');
+                    cargarClientes();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al dar de baja el cliente');
+                });
+        }
+    }
+</script>
+{% endblock %}

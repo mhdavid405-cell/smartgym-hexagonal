@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Administración - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-chart-line text-primary me-3"></i>Panel de Administración</h1>
+        <p class="lead">Bienvenido, <strong>{{ session.usuario_nombre }}</strong> ({{ session.usuario_rol }})</p>
+        <hr>
+    </div>
+</div>
+
+<!-- Tarjetas de estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Total Clientes</h5>
+                        <h2 class="display-6" id="totalClientes">-</h2>
+                    </div>
+                    <i class="fas fa-users fa-3x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Clientes Activos</h5>
+                        <h2 class="display-6" id="activosClientes">-</h2>
+                    </div>
+                    <i class="fas fa-user-check fa-3x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Ingresos del Mes</h5>
+                        <h2 class="display-6" id="ingresosMes">$ -</h2>
+                    </div>
+                    <i class="fas fa-dollar-sign fa-3x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Usuarios</h5>
+                        <h2 class="display-6" id="totalUsuarios">-</h2>
+                    </div>
+                    <i class="fas fa-user-cog fa-3x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <a href="/clientes/nuevo" class="btn btn-outline-primary w-100 py-3">
+                            <i class="fas fa-user-plus fa-2x mb-2 d-block"></i>
+                            Nuevo Cliente
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/usuarios" class="btn btn-outline-info w-100 py-3">
+                            <i class="fas fa-users fa-2x mb-2 d-block"></i>
+                            Gestionar Usuarios
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/reportes" class="btn btn-outline-success w-100 py-3">
+                            <i class="fas fa-chart-bar fa-2x mb-2 d-block"></i>
+                            Reportes
+                        </a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/membresias" class="btn btn-outline-warning w-100 py-3">
+                            <i class="fas fa-crown fa-2x mb-2 d-block"></i>
+                            Membresías
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Cargar estadísticas
+    fetch('/api/clientes')
+        .then(res => res.json())
+        .then(clientes => {
+            document.getElementById('totalClientes').textContent = clientes.length;
+            document.getElementById('activosClientes').textContent = clientes.filter(c => c.activo).length;
+        })
+        .catch(error => console.error('Error:', error));
+    
+    fetch('/api/usuarios')
+        .then(res => res.json())
+        .then(usuarios => {
+            document.getElementById('totalUsuarios').textContent = usuarios.length;
+        })
+        .catch(error => console.error('Error:', error));
+</script>
+{% endblock %}

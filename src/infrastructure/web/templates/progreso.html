@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+
+{% block title %}Progreso - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-chart-line text-primary me-3"></i>Registro de Progreso</h1>
+        <hr>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <a href="/progreso/nuevo" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Nuevo Registro
+        </a>
+    </div>
+    <div class="col-md-6">
+        <div class="input-group">
+            <input type="text" class="form-control" id="buscarCliente" placeholder="Buscar por cliente...">
+            <button class="btn btn-outline-secondary" onclick="buscarProgreso()">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Últimos Registros</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Fecha</th>
+                    <th>Peso</th>
+                    <th>Brazos</th>
+                    <th>Pecho</th>
+                    <th>Cintura</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaProgreso">
+                <tr>
+                    <td colspan="8" class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarProgreso();
+    });
+
+    function cargarProgreso() {
+        fetch('/api/progreso')
+            .then(response => response.json())
+            .then(registros => {
+                const tbody = document.getElementById('tablaProgreso');
+                tbody.innerHTML = '';
+
+                if (registros.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center">No hay registros de progreso</td></tr>';
+                    return;
+                }
+
+                registros.forEach(r => {
+                    fetch(`/api/clientes/${r.cliente_id}`)
+                        .then(res => res.json())
+                        .then(cliente => {
+                            const row = tbody.insertRow();
+                            row.innerHTML = `
+                                <td>${r.id}</td>
+                                <td>${cliente.nombre} ${cliente.apellido}</td>
+                                <td>${new Date(r.fecha).toLocaleDateString()}</td>
+                                <td>${r.peso ? r.peso + ' kg' : '-'}</td>
+                                <td>${r.brazos ? r.brazos + ' cm' : '-'}</td>
+                                <td>${r.pecho ? r.pecho + ' cm' : '-'}</td>
+                                <td>${r.cintura ? r.cintura + ' cm' : '-'}</td>
+                                <td>
+                                    <a href="/progreso/cliente/${r.cliente_id}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-chart-line"></i>
+                                    </a>
+                                </td>
+                            `;
+                        });
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('tablaProgreso').innerHTML = 
+                    '<tr><td colspan="8" class="text-center text-danger">Error al cargar progreso</td></tr>';
+            });
+    }
+</script>
+{% endblock %}

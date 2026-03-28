@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Cliente - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-edit text-primary me-3"></i>Editar Cliente</h1>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-warning text-white">
+                <h5 class="mb-0" id="clienteNombre">Cargando...</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4" id="loadingSpinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2">Cargando datos del cliente...</p>
+                </div>
+
+                <form id="formEditarCliente" style="display: none;">
+                    <input type="hidden" id="clienteId">
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="nombre" class="form-label">Nombre *</label>
+                            <input type="text" class="form-control" id="nombre" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="apellido" class="form-label">Apellido *</label>
+                            <input type="text" class="form-control" id="apellido" required>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="dni" class="form-label">DNI *</label>
+                            <input type="text" class="form-control" id="dni" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="telefono" class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" id="telefono">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="estado" class="form-label">Estado</label>
+                            <select class="form-select" id="estado">
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="membresia" class="form-label">Membresía</label>
+                            <select class="form-select" id="membresia">
+                                <option value="">Sin membresía</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="vencimiento" class="form-label">Fecha de Vencimiento</label>
+                            <input type="date" class="form-control" id="vencimiento">
+                        </div>
+                    </div>
+
+                    <div class="alert alert-danger d-none" id="errorAlert"></div>
+                    <div class="alert alert-success d-none" id="successAlert"></div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/clientes" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning" id="btnGuardar">
+                            <i class="fas fa-save me-2"></i>Guardar Cambios
+                        </button>
+                    </div>
+                </form>
+
+                <div id="errorInfo" class="alert alert-danger d-none">
+                    No se pudo cargar la información del cliente
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Obtener el ID de la URL
+    const pathParts = window.location.pathname.split('/');
+    const clienteId = pathParts[2];
+
+    // Cargar membresías disponibles
+    let membresias = [];
+    
+    fetch('/api/membresias')
+        .then(response => response.json())
+        .then(data => {
+            membresias = data;
+            const select = document.getElementById('membresia');
+            membresias.forEach(m => {
+                const option = document.createElement('option');
+                option.value = m.id;
+                option.textContent = `${m.tipo} - $${m.precio}/mes`;
+                select.appendChild(option);
+            });
+        });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarCliente();
+    });
+
+    function cargarCliente() {
+        fetch(`/api/clientes/${clienteId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Cliente no encontrado');
+                }
+                return response.json();
+            })
+            .then(cliente => {
+                // Ocultar spinner
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                // Mostrar formulario
+                document.getElementById('formEditarCliente').style.display = 'block';
+                
+                // Llenar datos
+                document.getElementById('clienteNombre').textContent = 
+                    `Editando: ${cliente.nombre} ${cliente.apellido}`;
+                document.getElementById('clienteId').value = cliente.id;
+                document.getElementById('nombre').value = cliente.nombre;
+                document.getElementById('apellido').value = cliente.apellido;
+                document.getElementById('dni').value = cliente.dni;
+                document.getElementById('email').value = cliente.email || '';
+                document.getElementById('telefono').value = cliente.telefono || '';
+                document.getElementById('estado').value = cliente.activo ? 'true' : 'false';
+                
+                // Seleccionar membresía si tiene
+                if (cliente.membresia_id) {
+                    document.getElementById('membresia').value = cliente.membresia_id;
+                }
+                
+                // Si tiene fecha de vencimiento, mostrarla
+                if (cliente.fecha_vencimiento_membresia) {
+                    document.getElementById('vencimiento').value = cliente.fecha_vencimiento_membresia;
+                }
+            })
+            .catch(error => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('errorInfo').classList.remove('d-none');
+                document.getElementById('errorInfo').textContent = 'Error: ' + error.message;
+                console.error('Error:', error);
+            });
+    }
+
+    document.getElementById('formEditarCliente').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // Ocultar alertas
+        document.getElementById('errorAlert').classList.add('d-none');
+        document.getElementById('successAlert').classList.add('d-none');
+        
+        // Deshabilitar botón
+        const btn = document.getElementById('btnGuardar');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+        
+        // Preparar datos
+        const clienteData = {
+            nombre: document.getElementById('nombre').value,
+            apellido: document.getElementById('apellido').value,
+            dni: document.getElementById('dni').value,
+            email: document.getElementById('email').value || null,
+            telefono: document.getElementById('telefono').value || null,
+            activo: document.getElementById('estado').value === 'true',
+            membresia_id: document.getElementById('membresia').value || null,
+            fecha_vencimiento_membresia: document.getElementById('vencimiento').value || null
+        };
+        
+        try {
+            const response = await fetch(`/api/clientes/${clienteId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(clienteData)
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                // Mostrar éxito
+                document.getElementById('successAlert').classList.remove('d-none');
+                document.getElementById('successAlert').textContent = 'Cliente actualizado exitosamente';
+                
+                // Redirigir al detalle después de 2 segundos
+                setTimeout(() => {
+                    window.location.href = `/clientes/${clienteId}`;
+                }, 2000);
+            } else {
+                // Mostrar error
+                document.getElementById('errorAlert').classList.remove('d-none');
+                document.getElementById('errorAlert').textContent = data.error || 'Error al actualizar cliente';
+                
+                // Re-habilitar botón
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Cambios';
+            }
+        } catch (error) {
+            document.getElementById('errorAlert').classList.remove('d-none');
+            document.getElementById('errorAlert').textContent = 'Error de conexión';
+            
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Cambios';
+            console.error('Error:', error);
+        }
+    });
+</script>
+{% endblock %}

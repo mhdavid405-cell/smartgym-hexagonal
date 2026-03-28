@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Dieta - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-utensils text-primary me-3"></i>Detalle de Dieta</h1>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0" id="dietaTitulo">Cargando...</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4" id="loadingSpinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2">Cargando datos de la dieta...</p>
+                </div>
+
+                <div id="dietaInfo" style="display: none;">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Cliente:</div>
+                        <div class="col-md-8" id="clienteNombre"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Fecha asignación:</div>
+                        <div class="col-md-8" id="fechaAsignacion"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Estado:</div>
+                        <div class="col-md-8" id="estadoDieta"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Descripción:</div>
+                        <div class="col-md-8" id="descripcion"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <h6 class="fw-bold">Plan de Comidas:</h6>
+                            <pre class="bg-light p-3 rounded" id="comidas" style="white-space: pre-wrap;"></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="errorInfo" class="alert alert-danger d-none">
+                    No se pudo cargar la información de la dieta
+                </div>
+            </div> <!-- Cierre correcto del card-body -->
+            
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="/dietas" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver
+                    </a>
+                    <div>
+                        <a href="#" class="btn btn-warning me-2" id="btnEditar" style="display: none;">
+                            <i class="fas fa-edit me-2"></i>Editar
+                        </a>
+                        <button class="btn btn-danger" id="btnDesactivar" style="display: none;">
+                            <i class="fas fa-ban me-2"></i>Desactivar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- Cierre del card -->
+    </div>
+</div>
+
+<script>
+    const dietaId = window.location.pathname.split('/').pop();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarDieta();
+    });
+
+    function cargarDieta() {
+        fetch(`/api/dietas/${dietaId}`)
+            .then(response => response.json())
+            .then(dieta => {
+                return fetch(`/api/clientes/${dieta.cliente_id}`)
+                    .then(res => res.json())
+                    .then(cliente => {
+                        // Ocultar spinner
+                        document.getElementById('loadingSpinner').style.display = 'none';
+                        document.getElementById('dietaInfo').style.display = 'block';
+
+                        // Llenar datos
+                        document.getElementById('dietaTitulo').textContent = dieta.titulo;
+                        document.getElementById('clienteNombre').textContent = `${cliente.nombre} ${cliente.apellido}`;
+                        document.getElementById('fechaAsignacion').textContent = new Date(dieta.fecha_asignacion).toLocaleDateString();
+                        document.getElementById('descripcion').textContent = dieta.descripcion || 'Sin descripción';
+                        document.getElementById('comidas').textContent = dieta.comidas;
+
+                        // Estado
+                        const estadoSpan = document.getElementById('estadoDieta');
+                        estadoSpan.innerHTML = dieta.activa ? 
+                            '<span class="badge bg-success">Activa</span>' : 
+                            '<span class="badge bg-secondary">Inactiva</span>';
+
+                        // ===== BOTÓN EDITAR =====
+                        const btnEditar = document.getElementById('btnEditar');
+                        if (btnEditar) {
+                            btnEditar.href = `/dietas/${dieta.id}/editar`;
+                            btnEditar.style.display = 'inline-block';
+                            console.log('✅ Botón editar configurado');
+                        } else {
+                            console.error('❌ No se encontró btnEditar');
+                        }
+
+                        // Botón desactivar
+                        const btnDesactivar = document.getElementById('btnDesactivar');
+                        if (btnDesactivar) {
+                            btnDesactivar.onclick = function() {
+                                if (dieta.activa) {
+                                    desactivarDieta(dieta.id);
+                                } else {
+                                    alert('Esta dieta ya está inactiva');
+                                }
+                            };
+                            btnDesactivar.style.display = 'inline-block';
+                        }
+                    });
+            })
+            .catch(error => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('errorInfo').classList.remove('d-none');
+                document.getElementById('errorInfo').textContent = 'Error: ' + error.message;
+                console.error('Error:', error);
+            });
+    }
+
+    function desactivarDieta(id) {
+        if (confirm('¿Estás seguro de desactivar esta dieta?')) {
+            fetch(`/api/dietas/${id}/desactivar`, { method: 'PUT' })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Dieta desactivada exitosamente');
+                    window.location.reload();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al desactivar la dieta');
+                });
+        }
+    }
+</script>
+{% endblock %}

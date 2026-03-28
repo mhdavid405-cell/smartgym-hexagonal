@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle del Cliente - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-user-circle text-primary me-3"></i>Detalle del Cliente</h1>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0" id="clienteNombre">Cargando...</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4" id="loadingSpinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2">Cargando datos del cliente...</p>
+                </div>
+
+                <div id="clienteInfo" style="display: none;">
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">ID:</div>
+                        <div class="col-md-8" id="clienteId"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Nombre completo:</div>
+                        <div class="col-md-8" id="clienteNombreCompleto"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">DNI:</div>
+                        <div class="col-md-8" id="clienteDni"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Email:</div>
+                        <div class="col-md-8" id="clienteEmail"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Teléfono:</div>
+                        <div class="col-md-8" id="clienteTelefono"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Fecha de registro:</div>
+                        <div class="col-md-8" id="clienteFechaRegistro"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Estado:</div>
+                        <div class="col-md-8" id="clienteEstado"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Membresía:</div>
+                        <div class="col-md-8" id="clienteMembresia"></div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-4 fw-bold">Vencimiento:</div>
+                        <div class="col-md-8" id="clienteVencimiento"></div>
+                    </div>
+                </div>
+
+                <div id="errorInfo" class="alert alert-danger d-none">
+                    No se pudo cargar la información del cliente
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="/clientes" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i>Volver al listado
+                    </a>
+                    <div>
+                        <a href="" id="btnEditarLink" class="btn btn-warning me-2" style="display: none;">
+                            <i class="fas fa-edit me-2"></i>Editar
+                        </a>
+                        <button class="btn btn-danger" id="btnDarBaja" style="display: none;">
+                            <i class="fas fa-user-slash me-2"></i>Dar de baja
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Obtener el ID de la URL
+    const pathParts = window.location.pathname.split('/');
+    const clienteId = pathParts[pathParts.length - 1];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarCliente();
+    });
+
+    function cargarCliente() {
+        fetch(`/api/clientes/${clienteId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Cliente no encontrado');
+                }
+                return response.json();
+            })
+            .then(cliente => {
+                // Ocultar spinner
+                document.getElementById('loadingSpinner').style.display = 'none';
+                
+                // Mostrar información
+                document.getElementById('clienteInfo').style.display = 'block';
+                document.getElementById('btnEditarLink').style.display = 'inline-block';
+                document.getElementById('btnDarBaja').style.display = 'inline-block';
+                
+                // Configurar enlace de edición
+                document.getElementById('btnEditarLink').href = `/clientes/${cliente.id}/editar`;
+                
+                // Llenar datos
+                document.getElementById('clienteNombre').textContent = 
+                    `${cliente.nombre} ${cliente.apellido}`;
+                document.getElementById('clienteId').textContent = cliente.id;
+                document.getElementById('clienteNombreCompleto').textContent = 
+                    `${cliente.nombre} ${cliente.apellido}`;
+                document.getElementById('clienteDni').textContent = cliente.dni;
+                document.getElementById('clienteEmail').textContent = cliente.email || '-';
+                document.getElementById('clienteTelefono').textContent = cliente.telefono || '-';
+                document.getElementById('clienteFechaRegistro').textContent = 
+                    new Date(cliente.fecha_registro).toLocaleDateString('es-ES');
+                
+                // Estado con badge
+                const estadoSpan = document.getElementById('clienteEstado');
+                estadoSpan.innerHTML = cliente.activo ? 
+                    '<span class="badge bg-success">Activo</span>' : 
+                    '<span class="badge bg-secondary">Inactivo</span>';
+                
+                // Membresía (hardcoded por ahora)
+                document.getElementById('clienteMembresia').textContent = 'Básica';
+                document.getElementById('clienteVencimiento').textContent = '30/04/2026';
+                
+                // Configurar botón de baja
+                document.getElementById('btnDarBaja').onclick = function() {
+                    darDeBaja(cliente.id);
+                };
+            })
+            .catch(error => {
+                document.getElementById('loadingSpinner').style.display = 'none';
+                document.getElementById('errorInfo').classList.remove('d-none');
+                console.error('Error:', error);
+            });
+    }
+
+    function darDeBaja(id) {
+        if (confirm('¿Estás seguro de dar de baja este cliente?')) {
+            fetch(`/api/clientes/${id}`, { method: 'DELETE' })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Cliente dado de baja exitosamente');
+                    window.location.href = '/clientes';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al dar de baja el cliente');
+                });
+        }
+    }
+</script>
+{% endblock %}

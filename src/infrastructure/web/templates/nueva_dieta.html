@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Nueva Dieta - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-plus-circle text-primary me-3"></i>Asignar Nueva Dieta</h1>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Datos de la Dieta</h5>
+            </div>
+            <div class="card-body">
+                <form id="formDieta">
+                    <div class="mb-3">
+                        <label for="cliente_id" class="form-label">Cliente</label>
+                        <select class="form-select" id="cliente_id" required>
+                            <option value="">Seleccionar cliente...</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="titulo" class="form-label">Título de la Dieta</label>
+                        <input type="text" class="form-control" id="titulo" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="comidas" class="form-label">Plan de Comidas</label>
+                        <textarea class="form-control" id="comidas" rows="6" required 
+                            placeholder="Desayuno: 
+Almuerzo: 
+Cena: 
+Snacks:"></textarea>
+                    </div>
+
+                    <div class="alert alert-danger d-none" id="errorAlert"></div>
+                    <div class="alert alert-success d-none" id="successAlert"></div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="/dietas" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary" id="btnGuardar">
+                            <i class="fas fa-save me-2"></i>Guardar Dieta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    fetch('/api/clientes')
+        .then(response => response.json())
+        .then(clientes => {
+            const select = document.getElementById('cliente_id');
+            clientes.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c.id;
+                option.textContent = `${c.nombre} ${c.apellido} - ${c.dni}`;
+                select.appendChild(option);
+            });
+        });
+
+    document.getElementById('formDieta').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const btn = document.getElementById('btnGuardar');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+
+        const data = {
+            cliente_id: document.getElementById('cliente_id').value,
+            titulo: document.getElementById('titulo').value,
+            descripcion: document.getElementById('descripcion').value,
+            comidas: document.getElementById('comidas').value
+        };
+
+        try {
+            const response = await fetch('/api/dietas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                document.getElementById('successAlert').classList.remove('d-none');
+                document.getElementById('successAlert').textContent = 'Dieta asignada exitosamente';
+                setTimeout(() => window.location.href = '/dietas', 2000);
+            } else {
+                document.getElementById('errorAlert').classList.remove('d-none');
+                document.getElementById('errorAlert').textContent = result.error;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Dieta';
+            }
+        } catch (error) {
+            document.getElementById('errorAlert').classList.remove('d-none');
+            document.getElementById('errorAlert').textContent = 'Error de conexión';
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-save me-2"></i>Guardar Dieta';
+        }
+    });
+</script>
+{% endblock %}

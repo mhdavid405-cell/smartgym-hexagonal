@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}Panel de Entrenador - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-chalkboard-user text-primary me-3"></i>Panel de Entrenador</h1>
+        <p class="lead">Bienvenido, <strong>{{ session.usuario_nombre }}</strong></p>
+        <hr>
+    </div>
+</div>
+
+<!-- Tarjetas de estadísticas -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="card-title">Mis Clientes</h5>
+                        <h2 class="display-6" id="misClientes">0</h2>
+                    </div>
+                    <i class="fas fa-users fa-3x opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Acciones Rápidas -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Acciones Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <a href="/rutinas/nueva" class="btn btn-outline-success w-100">Nueva Rutina</a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/dietas/nueva" class="btn btn-outline-warning w-100">Nueva Dieta</a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/progreso/nuevo" class="btn btn-outline-info w-100">Registrar Progreso</a>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="/clientes" class="btn btn-outline-primary w-100">Ver Clientes</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Lista de Clientes -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Mis Clientes</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>DNI</th>
+                                <th>Membresía</th>
+                                <th>Acciones</th>
+                            </thead>
+                            <tbody id="tablaClientes">
+                                全天<td colspan="5" class="text-center">Cargando...</td>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function cargarClientes() {
+        fetch('/api/clientes')
+            .then(response => response.json())
+            .then(clientes => {
+                document.getElementById('misClientes').innerText = clientes.length;
+                
+                const tbody = document.getElementById('tablaClientes');
+                tbody.innerHTML = '';
+                
+                if (clientes.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No tienes clientes asignados</td></tr>';
+                    return;
+                }
+                
+                for (let i = 0; i < clientes.length; i++) {
+                    const c = clientes[i];
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${c.id}</td>
+                        <td>${c.nombre} ${c.apellido}</td>
+                        <td>${c.dni}</td>
+                        <td>${c.membresia_nombre || 'Sin membresía'}</td>
+                        <td>
+                            <a href="/clientes/${c.id}" class="btn btn-sm btn-info">Ver</a>
+                            <a href="/rutinas/nueva?cliente=${c.id}" class="btn btn-sm btn-success">Rutina</a>
+                            <a href="/dietas/nueva?cliente=${c.id}" class="btn btn-sm btn-warning">Dieta</a>
+                            <a href="/progreso/nuevo?cliente=${c.id}" class="btn btn-sm btn-secondary">Progreso</a>
+                        </td>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('tablaClientes').innerHTML = '<tr><td colspan="5" class="text-center text-danger">Error al cargar clientes</td></tr>';
+            });
+    }
+    
+    document.addEventListener('DOMContentLoaded', cargarClientes);
+</script>
+{% endblock %}

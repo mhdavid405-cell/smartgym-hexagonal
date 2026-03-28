@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Historial de Progreso - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-chart-line text-primary me-3"></i>Historial de Progreso</h1>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-10 mx-auto">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0" id="clienteNombre">Cargando...</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4" id="loadingSpinner">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Cargando...</span>
+                    </div>
+                    <p class="mt-2">Cargando historial...</p>
+                </div>
+
+                <div id="historialInfo" style="display: none;">
+                    <!-- Tabla de historial -->
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Fecha</th>
+                                    <th>Peso (kg)</th>
+                                    <th>Brazos (cm)</th>
+                                    <th>Pecho (cm)</th>
+                                    <th>Cintura (cm)</th>
+                                    <th>Piernas (cm)</th>
+                                    <th>Notas</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tablaHistorial"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="errorInfo" class="alert alert-danger d-none">
+                    No se pudo cargar el historial
+                </div>
+            </div>
+            <div class="card-footer">
+                <a href="/progreso" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Volver
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const clienteId = window.location.pathname.split('/').pop();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarHistorial();
+    });
+
+    function cargarHistorial() {
+        Promise.all([
+            fetch(`/api/clientes/${clienteId}`).then(res => res.json()),
+            fetch(`/api/progreso/cliente/${clienteId}`).then(res => res.json())
+        ])
+        .then(([cliente, registros]) => {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('historialInfo').style.display = 'block';
+            document.getElementById('clienteNombre').textContent = 
+                `Historial de: ${cliente.nombre} ${cliente.apellido}`;
+
+            const tbody = document.getElementById('tablaHistorial');
+            tbody.innerHTML = '';
+
+            if (registros.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" class="text-center">No hay registros</td></tr>';
+                return;
+            }
+
+            registros.forEach(r => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${new Date(r.fecha).toLocaleDateString()}</td>
+                    <td>${r.peso || '-'}</td>
+                    <td>${r.brazos || '-'}</td>
+                    <td>${r.pecho || '-'}</td>
+                    <td>${r.cintura || '-'}</td>
+                    <td>${r.piernas || '-'}</td>
+                    <td>${r.notas || '-'}</td>
+                    <td>
+                        <a href="/progreso/${r.id}/editar" class="btn btn-sm btn-warning">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </td>
+                `;
+            });
+        })
+        .catch(error => {
+            document.getElementById('loadingSpinner').style.display = 'none';
+            document.getElementById('errorInfo').classList.remove('d-none');
+            console.error('Error:', error);
+        });
+    }
+</script>
+{% endblock %}

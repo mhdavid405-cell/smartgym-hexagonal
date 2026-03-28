@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Dietas - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-utensils text-primary me-3"></i>Dietas Alimenticias</h1>
+        <hr>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <a href="/dietas/nueva" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Nueva Dieta
+        </a>
+    </div>
+    <div class="col-md-6">
+        <div class="input-group">
+            <input type="text" class="form-control" id="buscarCliente" placeholder="Buscar por cliente...">
+            <button class="btn btn-outline-secondary" onclick="buscarDietas()">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">Todas las Dietas</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Título</th>
+                    <th>Comidas</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tablaDietas">
+                <tr>
+                    <td colspan="7" class="text-center">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarDietas();
+    });
+
+    function cargarDietas() {
+        fetch('/api/dietas')
+            .then(response => response.json())
+            .then(dietas => {
+                const tbody = document.getElementById('tablaDietas');
+                tbody.innerHTML = '';
+
+                if (dietas.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay dietas registradas</td></tr>';
+                    return;
+                }
+
+                dietas.forEach(d => {
+                    fetch(`/api/clientes/${d.cliente_id}`)
+                        .then(res => res.json())
+                        .then(cliente => {
+                            const row = tbody.insertRow();
+                            row.innerHTML = `
+                                <td>${d.id}</td>
+                                <td>${cliente.nombre} ${cliente.apellido}</td>
+                                <td>${d.titulo}</td>
+                                <td>${d.comidas.substring(0, 30)}...</td>
+                                <td>${new Date(d.fecha_asignacion).toLocaleDateString()}</td>
+                                <td>
+                                    <span class="badge ${d.activa ? 'bg-success' : 'bg-secondary'}">
+                                        ${d.activa ? 'Activa' : 'Inactiva'}
+                                    </span>
+                                </td>
+                                <td>
+                                    <a href="/dietas/${d.id}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            `;
+                        });
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('tablaDietas').innerHTML = 
+                    '<tr><td colspan="7" class="text-center text-danger">Error al cargar dietas</td></tr>';
+            });
+    }
+</script>
+{% endblock %}

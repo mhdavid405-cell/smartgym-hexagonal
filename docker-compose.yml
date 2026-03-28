@@ -1,0 +1,15 @@
+﻿services:
+  web:
+    build: .
+    container_name: smartgym_web
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: 192.168.100.20
+      DB_PORT: "1433"
+      DB_NAME: smartgym_db
+      DB_USER: sa
+      DB_PASSWORD: 123456
+      SECRET_KEY: mi-clave-secreta-para-docker
+    volumes:
+      - ./src:/app/src

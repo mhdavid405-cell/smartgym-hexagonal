@@ -1,0 +1,13 @@
+arranque de sistema 
+
+Paso 2.2: Ir a la carpeta del proyecto
+powershell
+cd "C:\Users\nicol\Documents\tarea david\smartgym-hexagonal"
+Paso 2.3: Activar entorno virtual
+powershell
+.\venv\Scripts\Activate.ps1
+Si da error de permisos:
+
+powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+.\venv\Scripts\Activate.ps1

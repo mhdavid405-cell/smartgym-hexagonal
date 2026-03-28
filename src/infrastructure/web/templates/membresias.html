@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Membresías - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-crown text-primary me-3"></i>Planes de Membresía</h1>
+        <hr>
+    </div>
+</div>
+
+<div class="row mb-3">
+    <div class="col-md-6">
+        <button class="btn btn-primary" onclick="cargarMembresias()">
+            <i class="fas fa-sync-alt me-2"></i>Actualizar
+        </button>
+    </div>
+</div>
+
+<div class="row" id="membresiasContainer">
+    <div class="col-12 text-center">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+        </div>
+        <p class="mt-2">Cargando membresías...</p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarMembresias();
+    });
+
+    function cargarMembresias() {
+        fetch('/api/membresias')
+            .then(response => response.json())
+            .then(membresias => {
+                const container = document.getElementById('membresiasContainer');
+                container.innerHTML = '';
+                
+                membresias.forEach(m => {
+                    const col = document.createElement('div');
+                    col.className = 'col-md-4 mb-4';
+                    col.innerHTML = `
+                        <div class="card h-100">
+                            <div class="card-header text-white ${getColorClass(m.tipo)}">
+                                <h4 class="mb-0">${m.tipo}</h4>
+                            </div>
+                            <div class="card-body">
+                                <h2 class="text-center mb-4">$${m.precio.toFixed(2)}<small class="text-muted">/mes</small></h2>
+                                <p class="card-text">${m.descripcion}</p>
+                                <ul class="list-unstyled">
+                                    <li><i class="fas fa-check text-success me-2"></i>Duración: ${m.duracion_dias} días</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer text-center">
+                                <button class="btn btn-primary" onclick="seleccionarMembresia(${m.id}, '${m.tipo}')">
+                                    Seleccionar
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(col);
+                });
+            })
+            .catch(error => {
+                document.getElementById('membresiasContainer').innerHTML = `
+                    <div class="col-12">
+                        <div class="alert alert-danger">
+                            Error al cargar membresías: ${error.message}
+                        </div>
+                    </div>
+                `;
+            });
+    }
+
+    function getColorClass(tipo) {
+        switch(tipo) {
+            case 'BÁSICA': return 'bg-secondary';
+            case 'VIP': return 'bg-primary';
+            case 'PREMIUM': return 'bg-warning';
+            default: return 'bg-info';
+        }
+    }
+
+    function seleccionarMembresia(id, tipo) {
+        // Por ahora solo mostramos un mensaje
+        alert(`Has seleccionado la membresía ${tipo} (ID: ${id})`);
+        // Aquí luego conectaremos con la asignación a clientes
+    }
+</script>
+{% endblock %}

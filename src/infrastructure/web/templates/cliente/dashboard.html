@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Mi Perfil - SmartGym{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1><i class="fas fa-user-circle text-primary me-3"></i>Mi Perfil</h1>
+        <p class="lead">Bienvenido, <strong>{{ session.usuario_nombre }}</strong></p>
+        <hr>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-id-card me-2"></i>Mis Datos</h5>
+            </div>
+            <div class="card-body" id="infoCliente">
+                <div class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Cargando información...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-crown me-2"></i>Mi Membresía</h5>
+            </div>
+            <div class="card-body" id="infoMembresia">
+                <div class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Cargando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0"><i class="fas fa-dumbbell me-2"></i>Mi Rutina Actual</h5>
+            </div>
+            <div class="card-body" id="infoRutina">
+                <div class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Cargando...</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0"><i class="fas fa-utensils me-2"></i>Mi Dieta Actual</h5>
+            </div>
+            <div class="card-body" id="infoDieta">
+                <div class="text-center py-3">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Cargando...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const clienteId = 1;
+    
+    function cargarDatos() {
+        fetch(`/api/clientes/${clienteId}`)
+            .then(res => res.json())
+            .then(cliente => {
+                document.getElementById('infoCliente').innerHTML = `
+                    <p><strong>Nombre:</strong> ${cliente.nombre} ${cliente.apellido}</p>
+                    <p><strong>DNI:</strong> ${cliente.dni}</p>
+                    <p><strong>Email:</strong> ${cliente.email || '-'}</p>
+                    <p><strong>Teléfono:</strong> ${cliente.telefono || '-'}</p>
+                    <p><strong>Fecha registro:</strong> ${new Date(cliente.fecha_registro).toLocaleDateString()}</p>
+                `;
+                
+                if (cliente.membresia_nombre) {
+                    document.getElementById('infoMembresia').innerHTML = `
+                        <p><strong>Plan:</strong> ${cliente.membresia_nombre}</p>
+                        <p><strong>Vencimiento:</strong> ${cliente.fecha_vencimiento_membresia || 'No asignado'}</p>
+                    `;
+                } else {
+                    document.getElementById('infoMembresia').innerHTML = '<p class="text-muted">Sin membresía activa</p>';
+                }
+            });
+        
+        fetch(`/api/rutinas/cliente/${clienteId}/activa`)
+            .then(res => res.json())
+            .then(rutina => {
+                if (rutina.id) {
+                    document.getElementById('infoRutina').innerHTML = `
+                        <p><strong>${rutina.titulo}</strong></p>
+                        <pre class="bg-light p-2 small">${rutina.ejercicios}</pre>
+                    `;
+                } else {
+                    document.getElementById('infoRutina').innerHTML = '<p class="text-muted">Sin rutina asignada</p>';
+                }
+            })
+            .catch(() => {
+                document.getElementById('infoRutina').innerHTML = '<p class="text-muted">Sin rutina asignada</p>';
+            });
+        
+        fetch(`/api/dietas/cliente/${clienteId}/activa`)
+            .then(res => res.json())
+            .then(dieta => {
+                if (dieta.id) {
+                    document.getElementById('infoDieta').innerHTML = `
+                        <p><strong>${dieta.titulo}</strong></p>
+                        <pre class="bg-light p-2 small">${dieta.comidas}</pre>
+                    `;
+                } else {
+                    document.getElementById('infoDieta').innerHTML = '<p class="text-muted">Sin dieta asignada</p>';
+                }
+            })
+            .catch(() => {
+                document.getElementById('infoDieta').innerHTML = '<p class="text-muted">Sin dieta asignada</p>';
+            });
+    }
+    
+    document.addEventListener('DOMContentLoaded', cargarDatos);
+</script>
+{% endblock %}
