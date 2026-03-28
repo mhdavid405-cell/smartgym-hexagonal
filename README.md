@@ -1,4 +1,4 @@
-﻿# 🏋️ SmartGym - Sistema de Gestión de Gimnasio
+﻿# SmartGym - Sistema de Gestión de Gimnasio
 
 [![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-2.3.3-green.svg)](https://flask.palletsprojects.com/)
@@ -7,7 +7,7 @@
 
 Sistema completo de gestión para gimnasios con **arquitectura hexagonal**, roles de usuario (Admin/Entrenador/Cliente), CRUD completo de clientes, membresías, pagos, rutinas, dietas y seguimiento de progreso.
 
-## 📋 Características
+## Características
 
 - ✅ **Arquitectura Hexagonal** (Puertos y Adaptadores)
 - ✅ **Autenticación y Roles**: Admin, Entrenador, Cliente
@@ -16,7 +16,7 @@ Sistema completo de gestión para gimnasios con **arquitectura hexagonal**, role
 - ✅ **Frontend**: Bootstrap 5, responsive
 - ✅ **Docker**: Contenedor para fácil despliegue
 
-## 🏗️ Tecnologías
+## Tecnologías
 
 | Capa | Tecnología |
 |------|------------|
@@ -26,15 +26,15 @@ Sistema completo de gestión para gimnasios con **arquitectura hexagonal**, role
 | Frontend | Bootstrap 5, Jinja2, JavaScript |
 | Infraestructura | Docker |
 
-## 👥 Roles y Permisos
+##  Roles y Permisos
 
 | Rol | Acceso |
 |-----|--------|
-| 👑 **Admin** | Acceso total a todo el sistema |
-| 🏋️ **Entrenador** | Gestiona clientes, rutinas, dietas, progreso |
-| 👤 **Cliente** | Solo visualiza su información personal |
+| **Admin** | Acceso total a todo el sistema |
+| **Entrenador** | Gestiona clientes, rutinas, dietas, progreso |
+| **Cliente** | Solo visualiza su información personal |
 
-## 🚀 Instalación
+## Instalación
 
 ### Opción 1: Local
 
@@ -85,7 +85,7 @@ http://localhost:5000
 | GET | \/api/progreso\ | Listar progreso |
 | POST | \/api/auth/login\ | Iniciar sesión |
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 \\\
 smartgym-hexagonal/
@@ -100,20 +100,20 @@ smartgym-hexagonal/
 └── requirements.txt
 \\\
 
-## 📸 Capturas de Pantalla
+##  Capturas de Pantalla
 
 | Dashboard Admin | Dashboard Entrenador | Dashboard Cliente |
 |-----------------|---------------------|-------------------|
 | ![Admin](docs/admin.png) | ![Entrenador](docs/entrenador.png) | ![Cliente](docs/cliente.png) |
 
-## 📄 Licencia
+## Licencia
 
 MIT
 
-## 👨‍💻 Autor
+## Autor
 
-[Tu Nombre] - [tu email] - [tu LinkedIn]
+[Manzano Hernandez David Axel] - [mhdavid405@gmail.com] 
 
 ---
 
-⭐️ ¡No olvides dejar una estrella si te gustó el proyecto!
+¡No olvides dejar una estrella si te gustó el proyecto!
