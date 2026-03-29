@@ -34,6 +34,16 @@ Sistema completo de gestión para gimnasios con **arquitectura hexagonal**, role
 | **Entrenador** | Gestiona clientes, rutinas, dietas, progreso |
 | **Cliente** | Solo visualiza su información personal |
 
+## Usuarios de Prueba
+
+| Usuario | Contraseña | Rol |
+|---------|------------|-----|
+| `admin` | `admin123` | Administrador |
+| `entrenador1` | `admin123` | Entrenador |
+| `cliente1` | `admin123` | Cliente |
+
+**Nota:** Los usuarios con rol `Cliente` solo pueden ver su propia información. Los usuarios `admin` y `entrenador1` tienen acceso a las funcionalidades según su rol.
+
 ## Instalación
 
 ### Opción 1: Local
