@@ -1,11 +1,10 @@
-# src/infrastructure/database/repositories/__init__.py
-
 from .cliente_repo_impl import ClienteRepositorioSQLServer
 from .pago_repo_impl import PagoRepositorioSQLServer
 from .membresia_repo_impl import MembresiaRepositorioSQLServer
 from .rutina_repo_impl import RutinaRepositorioSQLServer
 from .dieta_repo_impl import DietaRepositorioSQLServer
 from .progreso_repo_impl import ProgresoRepositorioSQLServer
+from .usuario_repo_impl import UsuarioRepositorioSQLServer
 
 __all__ = [
     'ClienteRepositorioSQLServer',
@@ -13,5 +12,6 @@ __all__ = [
     'MembresiaRepositorioSQLServer',
     'RutinaRepositorioSQLServer',
     'DietaRepositorioSQLServer',
-    'ProgresoRepositorioSQLServer'
+    'ProgresoRepositorioSQLServer',
+    'UsuarioRepositorioSQLServer'
 ]

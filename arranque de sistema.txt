@@ -11,3 +11,12 @@ Si da error de permisos:
 powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
 .\venv\Scripts\Activate.ps1
+
+
+
+arrancar
+python main.py
+
+
+
+Hash: $2b$12$oJEUSk7AFwisHJiGjqB.PeZz.SaHfHzfthC6RibCYteUbMpnfpHWG
