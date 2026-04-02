@@ -160,12 +160,11 @@ smartgym-hexagonal/
 
 | Página | Captura |
 |--------|---------|
-| Página Principal | !![Home](docs/images/Home.png) |
+| Página Principal | ![Home](docs/images/home.png) |
 | Login | ![Login](docs/images/login.png) |
 | Dashboard Admin | ![Admin](docs/images/admin.png) |
 | Dashboard Entrenador | ![Entrenador](docs/images/entrenador.png) |
 | Dashboard Cliente | ![Cliente](docs/images/cliente.png) |
-
 
 📄 Licencia
 MIT
