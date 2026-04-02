@@ -153,44 +153,6 @@ smartgym-hexagonal/
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt
-## 📸 Capturas de Pantalla
-
-### Página Principal
-![Home](docs/images/home.png)
-
-### Inicio de Sesión
-![Login](docs/images/login.png)
-
-### Dashboard Administrador
-![Admin Dashboard](docs/images/admin.png)
-
-### Dashboard Entrenador
-![Entrenador Dashboard](docs/images/entrenador.png)
-
-### Dashboard Cliente
-![Cliente Dashboard](docs/images/cliente.png)
-
-### Vista de Clientes
-![Clientes](docs/images/clientes.png)
-
-### Membresías
-![Membresías](docs/images/membresias.png)
-
-### Rutinas
-![Rutinas](docs/images/rutinas.png)
-
-### Dietas
-![Dietas](docs/images/dietas.png)
-
-### Progreso
-![Progreso](docs/images/progreso.png)
-
-
-
-
-
-
-
 
 📄 Licencia
 MIT
