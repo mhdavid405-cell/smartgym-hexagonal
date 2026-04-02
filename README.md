@@ -66,7 +66,7 @@ Esta arquitectura permite desacoplar la lógica del framework y de la base de da
 
 ---
 
-## 🚀 Cómo Probar el Proyecto (Para Reclutadores)
+## 🚀 Cómo Probar el Proyecto 
 
 ### Opción 1: Ejecutar con Docker (Recomendado)
 
