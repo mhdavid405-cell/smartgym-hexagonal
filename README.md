@@ -155,7 +155,6 @@ smartgym-hexagonal/
 ├── docker-compose.yml
 └── requirements.txt
 
-
 ## 📸 Capturas de Pantalla
 
 | Página | Captura |
