@@ -1,4 +1,4 @@
-﻿# SmartGym - Sistema de Gestión de Gimnasio
+# 🏋️ SmartGym - Sistema de Gestión de Gimnasio
 
 [![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-2.3.3-green.svg)](https://flask.palletsprojects.com/)
@@ -7,16 +7,32 @@
 
 Sistema completo de gestión para gimnasios con **arquitectura hexagonal**, roles de usuario (Admin/Entrenador/Cliente), CRUD completo de clientes, membresías, pagos, rutinas, dietas y seguimiento de progreso.
 
-## Características
+---
+
+## 📋 Características
 
 - ✅ **Arquitectura Hexagonal** (Puertos y Adaptadores)
 - ✅ **Autenticación y Roles**: Admin, Entrenador, Cliente
 - ✅ **CRUD Completo**: Clientes, Membresías, Pagos, Rutinas, Dietas, Progreso
-- ✅ **API REST**: 40+ endpoints documentados
+- ✅ **API REST**: 40+ endpoints organizados por módulos
 - ✅ **Frontend**: Bootstrap 5, responsive
 - ✅ **Docker**: Contenedor para fácil despliegue
 
-## Tecnologías
+---
+
+## 🧠 Arquitectura Hexagonal
+
+El sistema está organizado bajo el patrón de **puertos y adaptadores**, separando claramente las responsabilidades:
+
+- **Domain**: contiene la lógica de negocio pura (entidades y reglas)
+- **Application**: casos de uso que coordinan la lógica
+- **Infrastructure**: implementación de base de datos y capa web (Flask)
+
+Esta arquitectura permite desacoplar la lógica del framework y de la base de datos, facilitando el mantenimiento, las pruebas y la escalabilidad del sistema.
+
+---
+
+## 🏗️ Tecnologías
 
 | Capa | Tecnología |
 |------|------------|
@@ -26,15 +42,19 @@ Sistema completo de gestión para gimnasios con **arquitectura hexagonal**, role
 | Frontend | Bootstrap 5, Jinja2, JavaScript |
 | Infraestructura | Docker |
 
-##  Roles y Permisos
+---
+
+## 👥 Roles y Permisos
 
 | Rol | Acceso |
 |-----|--------|
-| **Admin** | Acceso total a todo el sistema |
-| **Entrenador** | Gestiona clientes, rutinas, dietas, progreso |
-| **Cliente** | Solo visualiza su información personal |
+| 👑 **Admin** | Acceso total a todo el sistema |
+| 🏋️ **Entrenador** | Gestiona clientes, rutinas, dietas, progreso |
+| 👤 **Cliente** | Solo visualiza su información personal |
 
-## Usuarios de Prueba
+---
+
+## 👤 Usuarios de Prueba
 
 | Usuario | Contraseña | Rol |
 |---------|------------|-----|
@@ -42,88 +62,104 @@ Sistema completo de gestión para gimnasios con **arquitectura hexagonal**, role
 | `entrenador1` | `admin123` | Entrenador |
 | `cliente1` | `admin123` | Cliente |
 
-**Nota:** Los usuarios con rol `Cliente` solo pueden ver su propia información. Los usuarios `admin` y `entrenador1` tienen acceso a las funcionalidades según su rol.
+> ⚠️ Estas credenciales son únicamente para pruebas en entorno local.
 
-## Instalación
+---
 
-### Opción 1: Local
+## 🚀 Cómo Probar el Proyecto (Para Reclutadores)
 
-\\\ash
-# Clonar repositorio
-git clone https://github.com/TU_USUARIO/smartgym-hexagonal.git
+### Opción 1: Ejecutar con Docker (Recomendado)
+
+#### Requisitos previos
+- Docker Desktop instalado
+- Git (opcional)
+
+#### Pasos
+
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/mhdavid405-cell/smartgym-hexagonal.git
 cd smartgym-hexagonal
 
-# Crear entorno virtual
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate      # Windows
-
-# Instalar dependencias
-pip install -r requirements.txt
-
-# Configurar variables de entorno
-cp .env.example .env
-# Editar .env con tus credenciales
-
-# Crear base de datos en SQL Server
-# Ejecutar el script SQL en DBeaver o SSMS
-
-# Ejecutar
-python main.py
-\\\
-
-### Opción 2: Docker
-
-\\\ash
-# Levantar contenedor
+# 2. Levantar el proyecto
 docker-compose up -d
 
-# Acceder a la aplicación
+# 3. Abrir en navegador
 http://localhost:5000
-\\\
+Comandos útiles
+# Ver logs
+docker-compose logs -f web
 
-## 🔗 Endpoints API
+# Detener
+docker-compose down
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | \/api/clientes\ | Listar clientes |
-| POST | \/api/clientes\ | Crear cliente |
-| GET | \/api/membresias\ | Listar membresías |
-| POST | \/api/pagos\ | Registrar pago |
-| GET | \/api/rutinas\ | Listar rutinas |
-| GET | \/api/dietas\ | Listar dietas |
-| GET | \/api/progreso\ | Listar progreso |
-| POST | \/api/auth/login\ | Iniciar sesión |
+# Reiniciar
+docker-compose restart
+Opción 2: Ejecutar sin Docker
+# 1. Clonar repositorio
+git clone https://github.com/mhdavid405-cell/smartgym-hexagonal.git
+cd smartgym-hexagonal
 
-## Estructura del Proyecto
+# 2. Crear entorno virtual
+python -m venv venv
 
-\\\
+# Windows
+venv\Scripts\activate
+
+# Linux/Mac
+source venv/bin/activate
+
+# 3. Instalar dependencias
+pip install -r requirements.txt
+
+# 4. Configurar variables de entorno
+# Copiar .env.example a .env y configurar credenciales
+
+# 5. Ejecutar app
+python main.py
+
+# 6. Abrir navegador
+http://localhost:5000
+🔐 Variables de Entorno
+
+El proyecto utiliza variables de entorno para manejar la configuración de forma segura.
+
+# Ejemplo de configuración (.env)
+DB_HOST=localhost
+DB_NAME=smartgym
+DB_USER=root
+DB_PASSWORD=your_password_here
+🔗 Endpoints API
+Método	Endpoint	Descripción
+GET	/api/clientes	Listar clientes
+POST	/api/clientes	Crear cliente
+GET	/api/clientes/<id>	Obtener cliente
+PUT	/api/clientes/<id>	Actualizar cliente
+DELETE	/api/clientes/<id>	Eliminar cliente
+GET	/api/membresias	Listar membresías
+POST	/api/pagos	Registrar pago
+GET	/api/rutinas	Listar rutinas
+GET	/api/dietas	Listar dietas
+GET	/api/progreso	Listar progreso
+POST	/api/auth/login	Iniciar sesión
+📁 Estructura del Proyecto
 smartgym-hexagonal/
 ├── src/
-│   ├── domain/           # Núcleo (Entidades, Casos de Uso, Puertos)
-│   ├── infrastructure/   # Adaptadores (Base de datos, Web)
+│   ├── domain/           # Lógica de negocio
+│   ├── infrastructure/   # Adaptadores (DB, Web)
 │   └── config/           # Configuración
 ├── tests/                # Pruebas
 ├── main.py               # Punto de entrada
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt
-\\\
-
-##  Capturas de Pantalla
-
-| Dashboard Admin | Dashboard Entrenador | Dashboard Cliente |
-|-----------------|---------------------|-------------------|
-| ![Admin](docs/admin.png) | ![Entrenador](docs/entrenador.png) | ![Cliente](docs/cliente.png) |
-
-## Licencia
+📄 Licencia
 
 MIT
 
-## Autor
+👨‍💻 Autor
 
-[Manzano Hernandez David Axel] - [mhdavid405@gmail.com] 
+Manzano Hernandez David Axel
+📧 mhdavid405@gmail.com
 
----
-
-¡No olvides dejar una estrella si te gustó el proyecto!
+⭐️ ¡No olvides dejar una estrella si te gustó el proyecto!
