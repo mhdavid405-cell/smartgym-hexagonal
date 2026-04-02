@@ -1,3 +1,4 @@
+﻿
 ﻿# 🏋️ SmartGym - Sistema de Gestión de Gimnasio
 
 [![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://www.python.org/)
@@ -154,6 +155,7 @@ smartgym-hexagonal/
 ├── docker-compose.yml
 └── requirements.txt
 
+
 ## 📸 Capturas de Pantalla
 
 | Página | Captura |
@@ -164,6 +166,7 @@ smartgym-hexagonal/
 | Dashboard Entrenador | ![Entrenador](docs/images/entrenador.png) |
 | Dashboard Cliente | ![Cliente](docs/images/cliente.png) |
 
+
 📄 Licencia
 MIT
 
@@ -172,4 +175,6 @@ MIT
 Manzano Hernandez David Axel
 📧 mhdavid405@gmail.com
 
+
 ⭐️ ¡No olvides dejar una estrella si te gustó el proyecto!
+
