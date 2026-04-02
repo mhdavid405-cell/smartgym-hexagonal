@@ -164,7 +164,6 @@ smartgym-hexagonal/
 | Dashboard Admin | ![Admin](https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/admin.png) |
 | Dashboard Entrenador | ![Entrenador](https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/entrenador.png) |
 | Dashboard Cliente | ![Cliente](https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/cliente.png) |
-
 📄 Licencia
 MIT
 
