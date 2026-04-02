@@ -66,6 +66,25 @@ Esta arquitectura permite desacoplar la lógica del framework y de la base de da
 
 ---
 
+## 📸 Capturas de Pantalla
+
+**Página Principal**
+![Home](https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/home.png)
+
+**Login**
+![Login](https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/login.png)
+
+**Dashboard Admin**
+![Admin](https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/admin.png)
+
+**Dashboard Entrenador**
+![Entrenador](https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/entrenador.png)
+
+**Dashboard Cliente**
+![Cliente](https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/cliente.png)
+
+---
+
 ## 🚀 Cómo Probar el Proyecto
 
 ### Opción 1: Ejecutar con Docker (Recomendado)
@@ -156,22 +175,6 @@ smartgym-hexagonal/
 ├── Dockerfile
 ├── docker-compose.yml
 └── requirements.txt
-📸 Capturas de Pantalla
-Página Principal
-https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/home.png
-
-Login
-https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/login.png
-
-Dashboard Admin
-https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/admin.png
-
-Dashboard Entrenador
-https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/entrenador.png
-
-Dashboard Cliente
-https://raw.githubusercontent.com/mhdavid405-cell/smartgym-hexagonal/master/docs/images/cliente.png
-
 📄 Licencia
 MIT
 
@@ -179,3 +182,4 @@ MIT
 Manzano Hernandez David Axel
 📧 mhdavid405@gmail.com
 
+⭐️ ¡No olvides dejar una estrella si te gustó el proyecto!
