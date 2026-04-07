@@ -1,18 +1,42 @@
-﻿# Python
-__pycache__/
-*.py[cod]
-venv/
+# Variables de entorno — NUNCA subir al repo
 .env
 .env.local
 .env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Entorno virtual — NUNCA subir al repo
+venv/
+env/
+.venv/
+ENV/
+
+# Tests de integración que requieren servidor (artefactos de desarrollo)
+tests/test_repo.py
+tests/test_use_case.py
+tests/test_models.py
+tests/test_dieta.py
+tests/test_rutina.py
+tests/test_progreso.py
+tests/test_progreso2.py
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
 
 # IDE
 .vscode/
 .idea/
 
-# Docker
-*.log
-
 # OS
 .DS_Store
 Thumbs.db
+
+# Logs
+*.log
